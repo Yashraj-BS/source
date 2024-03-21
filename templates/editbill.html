@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Bill</title>
+</head>
+
+<body>
+    <h1>Edit Bill</h1>
+
+    <form action="/editbill" method="POST">
+        <label for="editDate">Choose a date:</label><br>
+        <select id="editDate" name="date" required>
+            <option value="">--Select a date--</option>
+            {% for date in dates %}
+            <option value="{{ date }}">{{ date }}</option>
+            {% endfor %}
+        </select><br><br>
+        <input type="submit" value="Select">
+    </form>
+
+    <form action="/update_bill" method="POST" style="display:none;">
+        <input type="hidden" name="date" id="updateDate">
+        <table id="billTable">
+            <thead>
+                <tr>
+                    <th>Field</th>
+                    <th>Data</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+        <input type="submit" value="Save">
+    </form>
+
+    <script>
+        document.querySelector('form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const searchDate = formData.get('date');
+            const response = await fetch('/editbill', {
+                method: 'POST',
+                body: formData
+            });
+            const billData = await response.json();
+            if (Object.keys(billData).length > 0) {
+                const billTable = document.querySelector('#billTable tbody');
+                billTable.innerHTML = '';
+                for (const key in billData) {
+                    const row = `<tr>
+                                    <td>${key}</td>
+                                    <td><input type="text" name="${key}" value="${billData[key]}"></td>
+                                </tr>`;
+                    billTable.innerHTML += row;
+                }
+                document.querySelector('#updateDate').value = searchDate;
+                document.querySelector('form').style.display = 'none';
+                document.querySelector('form[action="/update_bill"]').style.display = 'block';
+            } else {
+                alert('No data found for the selected date');
+            }
+        });
+
+        document.getElementById('editDate').addEventListener('change', function () {
+            const inputs = document.querySelectorAll('form[action="/update_bill"] input[type="text"]');
+            inputs.forEach(input => {
+                input.value = '';  // Clear input fields
+            });
+
+            const billTable = document.querySelector('#billTable tbody');
+            billTable.innerHTML = '';  // Clear billTable content
+        });
+
+        // Add this script to clear input fields on page load
+        document.addEventListener("DOMContentLoaded", function () {
+            const inputs = document.querySelectorAll('form[action="/update_bill"] input[type="text"]');
+            inputs.forEach(input => {
+                input.value = '';  // Clear input fields
+            });
+        });
+    </script>
+</body>
+
+</html>

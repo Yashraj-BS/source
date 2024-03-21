@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate Bill</title>
+    <style>
+        /* Your CSS styles here */
+    </style>
+</head>
+
+<body>
+    <h1>Generate Bill</h1>
+    <form action="/generate_bill" method="post" id="bill_form">
+        <!-- Consignee and Consigner fields -->
+        <label for="consignee_name">Consignee:</label><br>
+        <input list="consignees" id="consignee_name" name="consignee_name" autocomplete="off">
+        <datalist id="consignees">
+            {% for consignee, data in consignees.items() %}
+            <option value="{{ consignee }}" consignee-address="{{ data }}">
+                {% endfor %}
+        </datalist><br><br>
+        <label for="consignee_address">Consignee Address:</label><br>
+        <input type="text" id="consignee_address" name="consignee_address" readonly><br><br>
+
+        <label for="consigner_name">Consigner:</label><br>
+        <input list="consigners" id="consigner_name" name="consigner_name" autocomplete="off">
+        <datalist id="consigners">
+            {% for consigner, data in consigners.items() %}
+            <option value="{{ consigner }}" consigner-address="{{ data }}">
+                {% endfor %}
+        </datalist><br><br>
+        <label for="consigner_address">Consigner Address:</label><br>
+        <input type="text" id="consigner_address" name="consigner_address" readonly><br><br>
+
+        <!-- Other form fields -->
+        <label for="from">From:</label><br>
+        <input type="text" id="from" name="from" autocomplete="off"><br>
+        <label for="to">To:</label><br>
+        <input type="text" id="to" name="to" autocomplete="off"><br>
+        <label for="vehicle_number">Vehicle Number:</label><br>
+        <input type="text" id="vehicle_number" name="vehicle_number" autocomplete="off"><br>
+        <label for="no_of_packages">No. of Packages:</label><br>
+        <input type="text" id="no_of_packages" name="no_of_packages" autocomplete="off"><br>
+        <label for="description">Description:</label><br>
+        <input type="text" id="description" name="description" autocomplete="off"><br>
+
+        <!-- Rates input fields with Paid and To-Pay -->
+        <label for="rate_per_qty">Rate per Qty:</label><br>
+        <input type="text" id="rate_per_qty_paid" name="rate_per_qty_paid" placeholder="Paid"><br>
+        <input type="text" id="rate_per_qty_to_pay" name="rate_per_qty_to_pay" placeholder="To-Pay"><br><br>
+
+        <label for="sur_charge">Surcharge:</label><br>
+        <input type="text" id="sur_charge_paid" name="sur_charge_paid" placeholder="Paid"><br>
+        <input type="text" id="sur_charge_to_pay" name="sur_charge_to_pay" placeholder="To-Pay"><br><br>
+
+        <label for="cover_charge">Cover Charge:</label><br>
+        <input type="text" id="cover_charge_paid" name="cover_charge_paid" placeholder="Paid"><br>
+        <input type="text" id="cover_charge_to_pay" name="cover_charge_to_pay" placeholder="To-Pay"><br><br>
+
+        <label for="st_charge">ST Charge:</label><br>
+        <input type="text" id="st_charge_paid" name="st_charge_paid" placeholder="Paid"><br>
+        <input type="text" id="st_charge_to_pay" name="st_charge_to_pay" placeholder="To-Pay"><br><br>
+
+        <label for="hamali">Hamali:</label><br>
+        <input type="text" id="hamali_paid" name="hamali_paid" placeholder="Paid"><br>
+        <input type="text" id="hamali_to_pay" name="hamali_to_pay" placeholder="To-Pay"><br><br>
+
+        <label for="other_charge">Other Charge:</label><br>
+        <input type="text" id="other_charge_paid" name="other_charge_paid" placeholder="Paid"><br>
+        <input type="text" id="other_charge_to_pay" name="other_charge_to_pay" placeholder="To-Pay"><br><br>
+
+        <!-- Value Rs and Submit button -->
+        <label for="value_rs">Value Rs:</label><br>
+        <input type="text" id="value_rs" name="value_rs" autocomplete="off"><br><br>
+
+        <label for="total">Total Rs:</label><br>
+        <input type="text" id="total" name="total" autocomplete="off"><br><br>
+
+        <input type="submit" value="Generate Bill">
+    </form>
+
+    <script>
+        // Update consignee address based on selected consignee
+        document.getElementById("consignee_name").addEventListener("input", function () {
+            var selectedConsignee = this.value;
+            var consigneeOption = document.querySelector('option[value="' + selectedConsignee + '"]');
+            var consigneeAddress = consigneeOption ? consigneeOption.getAttribute('consignee-address') : "";
+            document.getElementById("consignee_address").value = consigneeAddress;
+        });
+        // Allow consignee address field to always be editable
+        document.getElementById("consignee_address").removeAttribute("readonly");
+
+        // Update consigner address based on selected consigner
+        document.getElementById("consigner_name").addEventListener("input", function () {
+            var selectedConsigner = this.value;
+            var consignerOption = document.querySelector('option[value="' + selectedConsigner + '"]');
+            var consignerAddress = consignerOption ? consignerOption.getAttribute('consigner-address') : "";
+            document.getElementById("consigner_address").value = consignerAddress;
+        });
+        // Allow consigner address field to always be editable
+        document.getElementById("consigner_address").removeAttribute("readonly");
+    </script>
+</body>
+
+</html>

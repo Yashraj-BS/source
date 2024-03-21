@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate Bill</title>
+</head>
+
+<body>
+    <h1>Generate Bill</h1>
+    <form action="/generate_bill" method="post" id="bill_form">
+        <label for="customer_name">Customer Name:</label><br>
+        <input type="text" id="customer_name" name="customer_name" autocomplete="off"><br>
+        <label for="item_name">Item Name:</label><br>
+        <input list="items" id="item_name" name="item_name" autocomplete="off">
+        <datalist id="items">
+            {% for item in items %}
+            <option value="{{ item }}">
+                {% endfor %}
+        </datalist><br>
+        <label for="quantity">Quantity:</label><br>
+        <input type="text" id="quantity" name="quantity" autocomplete="off"><br>
+        <label for="price">Price:</label><br>
+        <input type="text" id="price" name="price" autocomplete="off"><br><br>
+        <label for="driver_name">Driver Name:</label><br>
+        <input list="drivers" id="driver_name" name="driver_name" autocomplete="off">
+        <datalist id="drivers">
+            {% for driver, data in drivers.items() %}
+            <option value="{{ driver }}" data-phone="{{ data.phone }}">
+                {% endfor %}
+        </datalist><br><br>
+        <label for="driver_phone">Driver Phone Number:</label><br>
+        <input type="text" id="driver_phone" name="driver_phone" readonly><br><br>
+        <input type="submit" value="Generate Bill">
+    </form>
+    <script>
+        // Prevent form submission on Enter key press
+        document.getElementById("bill_form").addEventListener("keydown", function (event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                var inputs = Array.from(this.getElementsByTagName("input"));
+                var index = inputs.findIndex(function (input) {
+                    return input === document.activeElement;
+                });
+                if (index > -1 && index < inputs.length - 1) {
+                    inputs[index + 1].focus();
+                }
+            }
+        });
+
+        // Update driver phone number based on selected driver
+        document.getElementById("driver_name").addEventListener("input", function () {
+            var selectedDriver = this.value;
+            var driverOption = document.querySelector('option[value="' + selectedDriver + '"]');
+            var driverPhone = driverOption ? driverOption.getAttribute('data-phone') : "";
+            document.getElementById("driver_phone").value = driverPhone;
+        });
+    </script>
+</body>
+
+</html>

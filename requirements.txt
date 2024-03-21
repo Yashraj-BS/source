@@ -1,0 +1,6 @@
+gunicorn
+PyGithub
+reportlab
+dotenv
+PyDrive
+flask
